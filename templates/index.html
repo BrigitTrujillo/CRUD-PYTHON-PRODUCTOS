@@ -8,8 +8,32 @@
 
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../static/css/style.css">
 </head>
 <body>
+
+    <ul class="nav justify-content-center  bg-warning">
+
+        <div class="brand">
+          <img src="../static/img/vectores/TFB.jpg" alt="" class="img1">
+        </div>
+    
+        
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="http://127.0.0.1:5000">Bienvenida</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="http://127.0.0.1:5000/productos">Productos</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="http://127.0.0.1:5000/productos">Agregar</a>
+        </li>
+       
+      </ul>
+
+
+
+
     
 <div class="container-fluid">
 <h1 class="text-center alert alert-warning">Lista de Productos</h1>
@@ -35,7 +59,7 @@
 
 
 
-    <!-- Enter New Student Modal -->
+    
     <div id="myModal" class="modal fade" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -89,40 +113,41 @@
     </div>
 
 
-
-
-
-<table class="table table-bordered border-primary">
-    <thead>
-        <tr>
-            <th scope="col">ID</th>
-            <th scope="col">Nombre</th>
-            <th scope="col">descripcion</th>
-            <th scope="col">precio</th>
-            <th scope="col">Stock</th>
-            <th scope="col">Imagen</th>
-            <th scope="col">Aciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for row in students %}
-        <tr>
-        <td>{{row.0}}</td>
-        <td>{{row.1}}</td>
-        <td>{{row.2}}</td>
-        <td>{{row.3}}</td>
-        <td>{{row.4}}</td>
-        <td>{{row.5}}</td>
-      
-        <td>
-            <a href="/update/{{row.0}}" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#modaledit{{row.0}}">Editar</a><br><br>
-            <a href="/delete/{{ row.0 }}" onclick="return confirm('Quieres eliminar ?')" class="btn btn-danger btn-sm">Elimnar</a>
-        </td>
-    </tr>
-
+    <table class="table table-bordered border-primary">
+        <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Descripción</th>
+                <th scope="col">Precio</th>
+                <th scope="col">Stock</th>
+                <th scope="col">Imagen</th>
+                <th scope="col">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for producto in productos %}
+            <tr>
+                <td>{{ producto['_id'] }}</td>
+                <td>{{ producto['nombre'] }}</td>
+                <td>{{ producto['descripcion'] }}</td>
+                <td>{{ producto['precio'] }}</td>
+                <td>{{ producto['stock'] }}</td>
+                <td>
+                    {% if producto['imagen'] %}
+                    <img src="{{ url_for('static', filename='uploads/' + producto['imagen']) }}" alt="Imagen del producto" width="100">
+                    {% else %}
+                    No hay imagen disponible
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="/update/{{ producto['_id'] }}" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#modaledit{{ producto['_id'] }}">Editar</a><br><br>
+                    <a href="/delete/{{ producto['_id'] }}" onclick="return confirm('¿Quieres eliminar este producto?')" class="btn btn-danger btn-sm">Eliminar</a>
+                </td>
+            </tr>
 
         <!-- Enter New Student Modal -->
-        <div id="modaledit{{row.0}}" class="modal fade" role="dialog">
+        <div id="modaledit{{ producto['_id'] }}" class="modal fade" role="dialog">
             <div class="modal-dialog">
                 <div class="modal-content">
        
@@ -137,26 +162,26 @@
                     <div class="modal-body">
                         
                         <form action="{{ url_for('update')}}" method="POST"  enctype="multipart/form-data">
-                            <input type="hidden" name="id" value="{{row.0}}">
+                            <input type="hidden" name="id" value="{{ producto['_id'] }}">
                             <div class="form-group">
                               <label>Nombre</label>
-                              <input value="{{row.1}}" type="nombre" name="nombre" class="form-control" id="exampleFormControlInput1" placeholder="Enter nombre">
+                              <input value="{{ producto['nombre'] }}" type="nombre" name="nombre" class="form-control" id="exampleFormControlInput1" placeholder="Enter nombre">
                             </div>
     
                             <div class="form-group">
                                 <label>Descripcion</label>
-                                <input value="{{row.2}}" type="descripcion" name="descripcion" class="form-control" id="exampleFormControlInput1" placeholder="Enter descripcion">
+                                <input value="{{ producto['descripcion'] }}" type="descripcion" name="descripcion" class="form-control" id="exampleFormControlInput1" placeholder="Enter descripcion">
                             </div>
     
                             <div class="form-group">
                                 <label>Precio</label>
-                                <input value="{{row.3}}" name="precio" type="precio" class="form-control" id="exampleFormControlInput1" placeholder="Enter precio">
+                                <input value="{{ producto['precio'] }}" name="precio" type="precio" class="form-control" id="exampleFormControlInput1" placeholder="Enter precio">
                               </div>
 
 
                             <div class="form-group">
                                 <label>stock</label>
-                                <input value="{{row.4}}" name="stock" type="stock" class="form-control" id="exampleFormControlInput1" placeholder="Enter stock">
+                                <input value="{{ producto['stock'] }}" name="stock" type="stock" class="form-control" id="exampleFormControlInput1" placeholder="Enter stock">
                               </div>
 
                               <div class="form-group">
@@ -173,11 +198,6 @@
     
         </div>
     
-    
-        <!-- End of Edit Student Modal -->
-
-
-
 
         {% endfor %}
     </tbody>
