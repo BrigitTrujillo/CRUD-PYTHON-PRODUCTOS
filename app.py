@@ -10,6 +10,7 @@ from bson.objectid import ObjectId
 load_dotenv()
 
 app = Flask(__name__)
+app.debug = True
 app.secret_key = 'many random bytes'
 app.config['UPLOAD_FOLDER'] = 'uploads'
 
@@ -17,10 +18,14 @@ upload_folder = app.config['UPLOAD_FOLDER']
 
 if not os.path.exists(upload_folder):
     os.makedirs(upload_folder)
-
+    
 # MongoDB connection
-client = MongoClient('mongodb+srv://brigittrujillo:12345@cluster0.tmcoio0.mongodb.net/productos?retryWrites=true&w=majority')
-db = client.productos
+MONGO_URI = os.getenv('MONGO_URI')
+
+# Resto del código
+client = MongoClient(MONGO_URI)
+db = client['productos']
+collection = db['productos']
 
 @app.route('/productos')
 def index():
@@ -61,7 +66,7 @@ def insert():
 
 @app.route('/delete/<string:id_data>', methods=['GET'])
 def delete(id_data):
-    # Convert id_data to ObjectId
+     # Convert id_data to ObjectId
     product_id = ObjectId(id_data)
 
     product = db.productos.find_one({'_id': product_id})
@@ -104,6 +109,7 @@ def update():
                 }}
             )
         else:
+            
             # Keep the existing image in the database
             db.productos.update_one(
                 {'_id': id_data},
@@ -113,10 +119,14 @@ def update():
                     'precio': precio,
                     'stock': stock
                 }}
-            )
+                 )
 
         flash("Data Updated Successfully")
         return redirect(url_for('index'))
 
-if __name__ == "__main__":
-    app.run(debug=True)
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
+        
+        
+        
+        
